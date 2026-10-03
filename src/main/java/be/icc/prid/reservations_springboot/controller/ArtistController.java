@@ -2,11 +2,16 @@ package be.icc.prid.reservations_springboot.controller;
 
 import be.icc.prid.reservations_springboot.model.Artist;
 import be.icc.prid.reservations_springboot.service.ArtistService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
@@ -34,4 +39,55 @@ public class ArtistController {
 
         return "artist/show";
     }
+
+    /// Affiche juste la page du formulaire d'edition
+    /// <p>C'est "update" qui fait l'edition</p>
+    /// @param model
+    /// @param id
+    /// @param request
+    /// @return
+    @GetMapping("/artists/{id}/edit")
+    public String edit(Model model, @PathVariable("id") long id, HttpServletRequest request) {
+        Artist artist = service.getArtist(id);
+
+        model.addAttribute("artist", artist);
+
+        // Generer le lien retour (histoire)
+        String referrer = request.getHeader("Referer");
+
+        // Si historique de provenance (page d'avant), alors ...
+        // sinon, on est redirige vers page profil de l'artiste
+        if (referrer != null && !referrer.equals("")) {
+            model.addAttribute("back", referrer);
+        } else {
+            model.addAttribute("back", "/artists/" + artist.getId());
+        }
+
+        return "artist/edit";
+    }
+
+    /// Valid l'Artiste (modele) et Bindresult (dans cet ordre).
+    /// <p>Autres parametres peuvent etre places avant ou apres ce bloc.</p>
+    /// @param artist
+    /// @param bindingResult
+    /// @param id
+    /// @param model
+    /// @return view
+    @PutMapping("/artists/{id}/edit")
+    public String update(@Valid @ModelAttribute Artist artist, BindingResult bindingResult, @PathVariable long id, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "artist/edit";
+        }
+
+        Artist existing = service.getArtist(id);
+
+        if (existing == null) {
+            return "artist/index";
+        }
+
+        service.updateArtist(id, artist);
+
+        return "redirect:/artists/" + artist.getId();
+    }
+
 }
