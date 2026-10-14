@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 @Configuration
 public class SpringSecurityConfig {
@@ -29,7 +30,12 @@ public class SpringSecurityConfig {
                         .usernameParameter("login")
                         .failureUrl("/login?loginError=true")
                         .permitAll())
-                .logout(LogoutConfigurer::permitAll)
+                .logout((logout) -> logout
+                        .logoutSuccessUrl("/login?logoutSuccess=true")
+                        .permitAll())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")))
                 .build();
     }
 }
