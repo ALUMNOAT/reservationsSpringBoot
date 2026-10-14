@@ -31,10 +31,13 @@ public class SpringSecurityConfig {
         return http.cors(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/admin").hasRole("ADMIN");
-            auth.requestMatchers("/user").hasRole("MEMBER");
-            auth.anyRequest().permitAll();
-        })
+                    auth.requestMatchers("/").permitAll();
+                    auth.requestMatchers("/login", "/login**", "/css/**", "/js/**",
+                            "/forgot-password", "/reset-password", "/reset-success").permitAll();
+                    auth.requestMatchers("/admin").hasRole("ADMIN");
+                    auth.requestMatchers("/user").hasRole("MEMBER");
+                    auth.anyRequest().permitAll();
+                })
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .usernameParameter("login")
