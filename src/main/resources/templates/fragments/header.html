@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <html lang="fr">
 <head>
     <meta charset="utf-8">
@@ -19,6 +21,11 @@
                     <a href="#" th:href="@{/artists}">Artists</a>
                 </li>
             </ul>
+        </div>
+        <div style="float:right">
+            <p sec:authorize="!isAuthenticated()">Vous n'êtes pas connecté.<br>
+                <a th:href="@{/login}" class="nav-link">Se connecter</a>
+            </p>
         </div>
     </div>
 </header>
