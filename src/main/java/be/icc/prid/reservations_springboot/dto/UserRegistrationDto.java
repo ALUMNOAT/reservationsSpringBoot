@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @PasswordMatches
-public class UserRegistrationDto {
+public class UserRegistrationDto implements PasswordConfirmable{
     @NotBlank(message = "Le prenom est obligatoire")
     private String firstName;
 

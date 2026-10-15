@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@PasswordMatches(message = "Les mots de passe ne corrspondent pas")
-public class UserProfileDto {
+@PasswordMatches(message = "Les mots de passe ne correspondent pas")
+public class UserProfileDto implements PasswordConfirmable{
 
     private Long id;
 
