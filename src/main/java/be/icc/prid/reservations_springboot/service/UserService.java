@@ -1,8 +1,11 @@
 package be.icc.prid.reservations_springboot.service;
 
+import be.icc.prid.reservations_springboot.dto.UserRegistrationDto;
 import be.icc.prid.reservations_springboot.model.User;
+import be.icc.prid.reservations_springboot.model.UserRole;
 import be.icc.prid.reservations_springboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +16,9 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
@@ -32,7 +38,19 @@ public class UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public void addUser(User user) {
+    public boolean isLoginAndEmailAvailable(String login, String email) {
+        return !userRepository.existsByLogin(login) && !userRepository.existsByEmail(email);
+    }
+
+    public void registerFromDto(UserRegistrationDto dto) {
+        User user = new User();
+        user.setFirstname(dto.getFirstName());
+        user.setLastname(dto.getLastName());
+        user.setLogin(dto.getLogin());
+        user.setEmail(dto.getEmail());
+        user.setLangue(dto.getLangue());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.MEMBER);
         userRepository.save(user);
     }
 

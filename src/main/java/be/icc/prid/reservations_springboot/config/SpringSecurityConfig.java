@@ -32,8 +32,10 @@ public class SpringSecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/").permitAll();
-                    auth.requestMatchers("/login", "/login**", "/css/**", "/js/**",
-                            "/forgot-password", "/reset-password", "/reset-success").permitAll();
+                    auth.requestMatchers(
+                            "/login", "/login**", "/css/**", "/js/**",
+                            "/forgot-password", "/reset-password", "/reset-success",
+                            "/registration").permitAll();
                     auth.requestMatchers("/admin").hasRole("ADMIN");
                     auth.requestMatchers("/user").hasRole("MEMBER");
                     auth.anyRequest().permitAll();
