@@ -1,11 +1,13 @@
 package be.icc.prid.reservations_springboot.dto;
 
+import be.icc.prid.reservations_springboot.validation.PasswordMatches;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@PasswordMatches
 public class UserRegistrationDto {
     @NotBlank(message = "Le prenom est obligatoire")
     private String firstName;
