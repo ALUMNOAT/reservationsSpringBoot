@@ -1,5 +1,6 @@
 package be.icc.prid.reservations_springboot.service;
 
+import be.icc.prid.reservations_springboot.dto.UserProfileDto;
 import be.icc.prid.reservations_springboot.dto.UserRegistrationDto;
 import be.icc.prid.reservations_springboot.model.User;
 import be.icc.prid.reservations_springboot.model.UserRole;
@@ -55,6 +56,23 @@ public class UserService {
     }
 
     public void updateUser(long id, User user) {
+        userRepository.save(user);
+    }
+
+    public void updateUserFromDto(UserProfileDto dto) {
+        User user = userRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+
+        user.setFirstname(dto.getFirstName());
+        user.setLastname(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setLangue(dto.getLangue());
+
+        // Si un nouveau mot de passe est fourni et valide
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
         userRepository.save(user);
     }
 
