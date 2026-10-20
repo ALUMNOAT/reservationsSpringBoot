@@ -5,12 +5,16 @@ import be.icc.prid.reservations_springboot.model.Language;
 import be.icc.prid.reservations_springboot.model.User;
 import be.icc.prid.reservations_springboot.repository.UserRepository;
 import be.icc.prid.reservations_springboot.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +81,31 @@ public class ProfileController {
         userService.updateUserFromDto(dto);
         redirAttrs.addFlashAttribute("successMessage", "Profil mis a jour avec succes !");
         return "redirect:profile";
+    }
+
+    @DeleteMapping("/profile/delete")
+    public String deleteAccount(HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirAttrs) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String login = auth.getName();
+
+        if (request.isUserInRole("ADMIN")) {
+            redirAttrs.addFlashAttribute("errorMessage",
+                    "Pas de suppression de son propre compte admin !");
+            return "redirect:/profile";
+        }
+
+        // Supprimer l'utilisateur courant
+        userService.deleteByLogin(login);
+
+        // Invalider la session HTTP (deconnecte l'utilisateur)
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+        // Effacer le contexte de securite
+        SecurityContextHolder.clearContext();
+        redirAttrs.addFlashAttribute("successMessage", "Votre compte a ete supprime avec succes.");
+        return "redirect:/";
     }
 
 }
