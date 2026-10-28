@@ -35,5 +35,3 @@ public class LocalityController {
         return "locality/show";
     }
 }
-
-//FIXME: http://localhost:8080/localities/{id} doesn't work
