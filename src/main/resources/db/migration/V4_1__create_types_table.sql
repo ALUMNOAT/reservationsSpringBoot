@@ -1,0 +1,4 @@
+CREATE TABLE types (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(30) NOT NULL
+);
