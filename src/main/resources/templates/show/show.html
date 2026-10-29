@@ -14,6 +14,8 @@
         </p>
         <canvas th:unless="${show.posterUrl}" width="200" height="100" style="border:1px solid #000000;"></canvas>
 
+        <p><strong>Description:</strong> <span th:text="${show.description}">/</span></p>
+
         <p th:if="${show.location}"><strong>Lieu de création:</strong> <span th:text="${show.location.designation}">Art Center</span></p>
 
         <p><strong>Prix:</strong> <span th:text="${show.price} + ' €'">9.99 €</span></p>
@@ -27,6 +29,29 @@
                 th:text="${#temporals.format(representation.when,'dd-MM-yyyy HH:mm')}">12-10-2012 13:30</li>
         </ul>
         <p th:if="${#lists.size(show.representations)==0}">Aucune représentation</p>
+
+        <h2>Liste des artistes</h2>
+        <p><strong>Auteur:</strong>
+            <span th:each="auteur,iter : ${collaborateurs['auteur']}"
+                  th:text="${auteur.firstname}+' '+${auteur.lastname}
+           + (${iter.count}==${iter.size}-1 ? ' et ':(${iter.last}?'':', '))">
+              Firstname Lastname
+          </span>
+        </p>
+        <p><strong>Metteur en scène:</strong>
+            <span th:each="scenographe,iter : ${collaborateurs['scenographe']}"
+                  th:text="${scenographe.firstname}+' '+${scenographe.lastname}
+           + (${iter.count}==${iter.size}-1 ? ' et ':(${iter.last}?'':', '))">
+              Firstname Lastname
+          </span>
+        </p>
+        <p><strong>Distribution:</strong>
+            <span th:each="comedien,iter : ${collaborateurs['comedien']}"
+                  th:text="${comedien.firstname}+' '+${comedien.lastname}
+           + (${iter.count}==${iter.size}-1 ? ' et ':(${iter.last}?'':', '))">
+              Firstname Lastname
+          </span>
+        </p>
 
         <nav><a th:href="@{/shows}">Retour à l'index</a></nav>
     </div>
