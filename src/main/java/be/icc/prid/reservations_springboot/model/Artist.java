@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -22,4 +25,23 @@ public class Artist {
     @NotBlank(message = "The lastname must not be empty")
     @Size(min = 2, max = 60, message = "The lastname must be between 2 and 60 characters long.")
     private String lastname;
+
+    @ManyToMany(mappedBy = "artists")
+    private List<Type> types = new ArrayList<>();
+
+    public Artist addType(Type type) {
+        if (!this.types.contains(type)) {
+            this.types.add(type);
+            type.addArtist(this);
+        }
+        return this;
+    }
+
+    public Artist removeType(Type type) {
+        if (this.types.contains(type)) {
+            this.types.remove(type);
+            type.getArtists().remove(this);
+        }
+        return this;
+    }
 }
