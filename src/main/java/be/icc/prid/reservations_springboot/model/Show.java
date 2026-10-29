@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -47,6 +49,9 @@ public class Show {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(targetEntity = Representation.class, mappedBy = "show")
+    private List<Representation> representations = new ArrayList<>();
+
     public Show(String title, String description, String posterUrl, Location location, boolean bookable, double price) {
         Slugify slg = new Slugify();
 
@@ -71,6 +76,22 @@ public class Show {
         this.location.removeShow(this);     //demenager de l'ancien lieu
         this.location = location;
         this.location.addShow(this);        //emmenager dans le nouveau lieu
+    }
 
+    public Show addRepresentation(Representation representation) {
+        if (!this.representations.contains(representation)) {
+            this.representations.add(representation);
+            representation.setShow(this);
+        }
+        return this;
+    }
+
+    public Show removeRepresentation(Representation representation) {
+        if (this.representations.contains(representation)) {
+            if (representation.getLocation().equals(this)) {
+                representation.setLocation(null);
+            }
+        }
+        return this;
     }
 }
