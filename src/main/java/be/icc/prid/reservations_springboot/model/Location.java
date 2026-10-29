@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -27,6 +30,9 @@ public class Location {
     private String website;
     private String phone;
 
+    @OneToMany(targetEntity = Show.class, mappedBy = "location")
+    private List<Show> shows = new ArrayList<>();
+
     public Location(String slug, String designation, String address, Locality locality, String website, String phone) {
         Slugify slg = new Slugify();
 
@@ -48,5 +54,25 @@ public class Location {
         this.locality.removeLocation(this);
         this.locality = locality;
         this.locality.addLocation(this);
+    }
+
+    public Location addShow(Show show) {
+        if (!this.shows.contains(show)) {
+            this.shows.add(show);
+            show.setLocation(this);
+        }
+
+        return this;
+    }
+
+    public Location removeShow(Show show) {
+        if (this.shows.contains(show)) {
+            this.shows.remove(show);
+            if (show.getLocation().equals(this)) {
+                show.setLocation(null);
+            }
+        }
+
+        return this;
     }
 }
